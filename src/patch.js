@@ -19,6 +19,17 @@ export function patchHtml(h){
  ["items.forEach(item=>{","activeItems.forEach(item=>{"],
  ];
  for(const [a,b] of r){if(!h.includes(a))throw Error("patch target not found");h=h.replace(a,b)}
+ const coreReplacements=[
+  ["const $pc=id=>document.getElementById(id), KEY='muntaha_prayer_calendar_v1', START='muntaha_qaza_start_date';",
+   "const $pc=id=>document.getElementById(id), KEY='muntaha_prayer_calendar_v1', START='muntaha_qaza_start_date';const RESET_VERSION='2026-11-20-qaza-calendar-cleanup-v1',LOCAL_RESET_KEY='muntaha_qaza_calendar_local_reset_version';if(localStorage.getItem(LOCAL_RESET_KEY)!==RESET_VERSION){try{localStorage.setItem(KEY,'{}');localStorage.setItem(LOCAL_RESET_KEY,RESET_VERSION)}catch(e){console.warn('Qaza calendar local cleanup could not complete',e)}}"],
+  ["function isDayLocked(date){return parse(date)<today()&&dayComplete(date)}",
+   "function isDayLocked(date){return false}"],
+  ["const payload={entries:data,startDate:start||iso(today()),dailyGoal:dailyGoalState||null,updatedAt:serverTimestamp()};",
+   "const payload={entries:data,startDate:start||iso(today()),dailyGoal:dailyGoalState||null,calendarResetVersion:RESET_VERSION,updatedAt:serverTimestamp()};"],
+  ["const remote=snap.data()||{},remoteEntries=remote.entries&&typeof remote.entries===\"object\"?remote.entries:{};",
+   "const remote=snap.data()||{},remoteEntries=remote.entries&&typeof remote.entries===\"object\"?remote.entries:{};if(remote.calendarResetVersion!==RESET_VERSION){data={};try{localStorage.setItem(KEY,'{}')}catch(e){}calendarDirty=true;setDoc(ref,{entries:{},calendarResetVersion:RESET_VERSION,updatedAt:serverTimestamp()},{merge:true}).then(()=>{calendarDirty=false;render()}).catch(e=>console.warn('Qaza calendar cleanup sync failed; local entries cleared',e));render();return;}"]
+ ];
+ for(const [a,b] of coreReplacements){if(!h.includes(a))throw Error("calendar core patch target not found: "+a.slice(0,90));h=h.replace(a,b)}
  const initPattern=/const startInput=\$pc\('pcStartDate'\);\s*let startSaved=!!localStorage\.getItem\(START\),start=localStorage\.getItem\(START\)\|\|iso\(today\(\)\);\s*startInput\.value=start;startInput\.disabled=startSaved;if\(startSaved\)\{\$pc\('pcSaveStart'\)\.disabled=true;\$pc\('pcSaveStart'\)\.textContent='[^']*'\}/;
  const match=h.match(initPattern);
  if(!match)throw Error("start date initialization target not found");
