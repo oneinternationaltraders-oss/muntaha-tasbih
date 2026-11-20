@@ -1,6 +1,7 @@
-const CACHE="muntaha-tasbih-offline-v62";
-const ASSETS=["/","/manifest.webmanifest","/patch.js?v=63",...Array.from({length:64},(_,i)=>"/packed"+i+".txt")];
-self.addEventListener("install",event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
+const CACHE="muntaha-tasbih-offline-v63";
+const ASSETS=["/","/manifest.webmanifest","/patch.js?v=66",...Array.from({length:64},(_,i)=>"/packed"+i+".txt")];
+self.addEventListener("install",event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>{})));
+self.addEventListener("message",event=>{if(event.data&&event.data.type==="MUNTAHA_SKIP_WAITING")self.skipWaiting()});
 self.addEventListener("activate",event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith("muntaha-tasbih-offline-")&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener("fetch",event=>{
  const request=event.request;
