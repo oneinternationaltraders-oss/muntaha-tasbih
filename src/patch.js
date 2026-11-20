@@ -6,7 +6,7 @@ export function patchHtml(h){
  ['.myprayers-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:8px 0 12px}','.myprayers-actions{display:grid;grid-template-columns:1fr;gap:5px;margin:8px 0 12px}'],
  ['.myprayers-actions{grid-template-columns:repeat(4,minmax(0,1fr))}','.myprayers-actions{grid-template-columns:1fr}'],
  ['$("settingsView").classList.toggle("hidden",!settings)}',
-  '$("settingsView").classList.toggle("hidden",!settings);if(myprayers){const v=$("myPrayersView"),p=$("prayerCalendarPanel");if(v&&p){p.classList.remove("hidden");v.insertBefore(p,v.firstChild);const q=v.querySelector(".qaza-grid");if(q)p.after(q);document.querySelectorAll("#myPrayersView > .myprayers-hero,#myPrayersView > .myprayers-section-title,#myPrayersView > .qaza-grid").forEach(x=>x.classList.remove("hidden"))}}}']
+  '$("settingsView").classList.toggle("hidden",!settings);if(myprayers){const v=$("myPrayersView"),p=$("prayerCalendarPanel");if(v&&p){p.classList.remove("hidden");v.insertBefore(p,v.firstChild);const q=v.querySelector(".qaza-grid");if(q)v.insertBefore(q,p);document.querySelectorAll("#myPrayersView > .myprayers-hero,#myPrayersView > .myprayers-section-title,#myPrayersView > .qaza-grid").forEach(x=>x.classList.remove("hidden"))}}}']
  ];
  for(const [a,b] of r){if(!h.includes(a))throw Error("patch target not found");h=h.replace(a,b)}
  const initPattern=/const startInput=\$pc\('pcStartDate'\);\s*let startSaved=!!localStorage\.getItem\(START\),start=localStorage\.getItem\(START\)\|\|iso\(today\(\)\);\s*startInput\.value=start;startInput\.disabled=startSaved;if\(startSaved\)\{\$pc\('pcSaveStart'\)\.disabled=true;\$pc\('pcSaveStart'\)\.textContent='[^']*'\}/;
