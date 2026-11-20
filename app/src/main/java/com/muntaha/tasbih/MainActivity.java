@@ -61,6 +61,7 @@ public class MainActivity extends Activity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 cookies.flush();
+                hideVercelToolbar();
                 setContentView(webView);
             }
 
@@ -76,6 +77,28 @@ public class MainActivity extends Activity {
         } else {
             setContentView(webView);
         }
+    }
+
+    // Remove the Vercel Toolbar injected into the hosted page. This is limited
+    // to the Android WebView and does not modify the live website or Firebase data.
+    private void hideVercelToolbar() {
+        String script = "(function(){"
+            + "var selectors=['vercel-toolbar','#vercel-toolbar','[data-vercel-toolbar]',"
+            + "'#vercel-toolbar-root','vercel-live-feedback','[data-vercel-live-feedback]',"
+            + "'#vercel-toolbar-container','[data-testid=vercel-toolbar]'];"
+            + "function clean(){selectors.forEach(function(s){"
+            + "document.querySelectorAll(s).forEach(function(e){"
+            + "e.style.setProperty('display','none','important');"
+            + "e.style.setProperty('visibility','hidden','important');"
+            + "e.style.setProperty('pointer-events','none','important');"
+            + "});});"
+            + "document.querySelectorAll('button,[role=button],a').forEach(function(e){"
+            + "var label=((e.getAttribute('aria-label')||'')+' '+(e.getAttribute('title')||'')+' '+(e.innerText||'')).toLowerCase();"
+            + "if(label.includes('vercel') && e.getBoundingClientRect().width<100){"
+            + "e.style.setProperty('display','none','important');}});}"
+            + "clean();new MutationObserver(clean).observe(document.documentElement,{childList:true,subtree:true});"
+            + "})();";
+        if (webView != null) webView.evaluateJavascript(script, null);
     }
 
     private void showNetworkError() {
