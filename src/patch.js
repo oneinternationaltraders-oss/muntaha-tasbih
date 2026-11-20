@@ -84,3 +84,5 @@ const run=()=>{decorateDaily();reorderQazaDateGroups();reorderCalendarDates();ca
  h=h.replace(/<\/body>/i,updateUi+'</body>');
  return h;
 }
+
+// Calendar repair v70: only ادا states count as a completed day; date cards expose their ISO date.
